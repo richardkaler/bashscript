@@ -1,0 +1,10 @@
+#This is optional but without it, the other script in this repo isn't quite as cool. This simply runs the last file stored in the end users primary script directory
+#since I store my scripts in ~/bin, I am referencing that here. Feel free to change it
+
+run() {
+    fileout() {
+        find ~/bin  -maxdepth 1 -executable -type f -exec ls -t {} + 2>/dev/null | head -n 1
+    }
+if [[ "$1" == "-h" ]]; then 
+    echo "Runs last script written in ~/bin"
+fi
