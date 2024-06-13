@@ -32,34 +32,34 @@ fi
 if [[ -z "$1" ]]; then 
    echo "ERROR - Enter a name for the script you want to create"
 fi
-if [[ -n "$1" ]]; then 
 
-dirval="$1"
-bindir="/home/richie/bin/"
+#binarg="$(echo "$1" | grep bin)"
 
-if [[ "$bindir" != "$dirval" ]]; then 
-   scriptname="$1"
-   echo -e '#!/bin/bash\n\n' > "$scriptname"
-   vim -c :3 -c 'startinsert' "$scriptname" || echo "Error! Failed to create script" 
-   chmod +x "$scriptname" && echo -e "Created: $scriptname" and marked as executable\
-      || echo "failed to mark script as executable"
-else
-    if [[ -n "$binecho" ]]; then 
-       scriptname="$1"
-       echo -e '#!/bin/bash\n\n' > "$scriptname"
-       vim -c :3 -c 'startinsert' "$scriptname" || echo "Error! Failed to create script" 
-       chmod +x "$scriptname" && echo -e "Created: $scriptname" \
-           || echo "failed to mark script as executable"
-       [[ -f "$scriptname" ]] && echo -e "Type \"run\" to execute" 
-    else 
-       pushd "$HOME/bin" >&/dev/null || return
-       scriptname="$HOME/bin/$1"
-       echo -e '#!/bin/bash\n\n' > "$scriptname"
-       vim -c :3 -c 'startinsert' "$scriptname" || echo "Error! Failed to create script" 
-       chmod +x "$scriptname" && echo -e "Created: $scriptname" \
-          || echo "failed to mark script as executable"
-       [[ -f "$scriptname" ]] && echo -e "Type \"run\" to execute" 
-    fi
-fi
+argecho() {
+    echo "dirname $(pwd)" | grep bin
+}
+
+scriptname="$1"
+
+bincheck() {
+    echo "$1" | grep bin
+}
+
+fileshort="$(basename "$1")"
+
+verify() {
+    if [[ -n "$(find ~/bin -type f -name "$fileshort")" ]]; then 
+   echo -e "Type \"run\" to execute"
 fi
 }
+       echo -e '#!/bin/bash\n\n' > "$scriptname"
+       vim -c :3 -c 'startinsert' "$scriptname" || echo "Error! Failed to create script" 
+       chmod +x "$scriptname" && 
+echo -e "Created: $scriptname\n...marked as an executable"\
+           || echo "failed to mark script as executable"
+       sleep .4s
+       verify
+wait
+
+}
+
