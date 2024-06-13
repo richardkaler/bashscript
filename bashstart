@@ -1,0 +1,65 @@
+#!/bin/bash 
+#
+# Copyright 2024 richardkaler@gmail.com
+#
+# This script is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 3 of the License, or (at
+# your option) any later version.
+#
+# This script is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this script; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+#INCLUDE in Bashrc or as an independent script.This will create a bash script with vim, go into insert mode, then skip two lines down from the shebang 
+#NOTE: To make this work you have to A). Put it in your bashrc or B.) create an independent script - though I have not tried that and it may cause problems 
+#that way considering the nature of how subshells work. Anyone who wants to play with it though - go right ahead. On that note, this is even cooler and more 
+#convenient if you alias this in ~/.bash_aliases with something like: bsh ... for the ever-so-lazy coder, myself being one of such people. 
+
+bashstart() {
+binecho="$(echo "$1" | grep bin)"
+
+if [[ "$1" == "-h" ]]; then 
+   echo "Create a script with shebang line included"
+   echo -e "\"bashstart foo\": creates ~/bin/foo with a shebang at the top"
+fi
+
+if [[ -z "$1" ]]; then 
+   echo "ERROR - Enter a name for the script you want to create"
+fi
+if [[ -n "$1" ]]; then 
+
+dirval="$1"
+bindir="/home/richie/bin/"
+
+if [[ "$bindir" != "$dirval" ]]; then 
+   scriptname="$1"
+   echo -e '#!/bin/bash\n\n' > "$scriptname"
+   vim -c :3 -c 'startinsert' "$scriptname" || echo "Error! Failed to create script" 
+   chmod +x "$scriptname" && echo -e "Created: $scriptname" and marked as executable\
+      || echo "failed to mark script as executable"
+else
+    if [[ -n "$binecho" ]]; then 
+       scriptname="$1"
+       echo -e '#!/bin/bash\n\n' > "$scriptname"
+       vim -c :3 -c 'startinsert' "$scriptname" || echo "Error! Failed to create script" 
+       chmod +x "$scriptname" && echo -e "Created: $scriptname" \
+           || echo "failed to mark script as executable"
+       [[ -f "$scriptname" ]] && echo -e "Type \"run\" to execute" 
+    else 
+       pushd "$HOME/bin" >&/dev/null || return
+       scriptname="$HOME/bin/$1"
+       echo -e '#!/bin/bash\n\n' > "$scriptname"
+       vim -c :3 -c 'startinsert' "$scriptname" || echo "Error! Failed to create script" 
+       chmod +x "$scriptname" && echo -e "Created: $scriptname" \
+          || echo "failed to mark script as executable"
+       [[ -f "$scriptname" ]] && echo -e "Type \"run\" to execute" 
+    fi
+fi
+fi
+}
